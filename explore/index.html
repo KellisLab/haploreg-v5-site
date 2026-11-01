@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explore · HaploReg</title>
+<meta name="description" content="Expand variants to their LD partners and compare chromatin state, motif changes, protein binding and trait associations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<script src="../shared/epigenomes.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/glossary.js"></script>
+<script src="../shared/source-ensembl.js"></script>
+<script src="../shared/source-demo.js"></script>
+<script src="../assets/ui.js"></script>
+</head>
+<body class="app" data-root="../">
+<header class="topbar">
+  <a class="wordmark" href="../">HaploReg<sup>v5</sup></a>
+  <nav class="topnav">
+    <a href="./" class="active">Explore</a>
+    <a href="../docs/">Docs</a>
+    <a href="../classic/index.html" id="classicLink" class="hide-xs">Classic</a>
+  </nav>
+  <div class="spacer"></div>
+  <label class="source-pill"><span class="txt">Data</span><select id="source" aria-label="Data source"></select><span id="sourceInfo"></span></label>
+  <button class="icon-btn" id="themeBtn" type="button" title="Switch light / dark" aria-label="Switch light or dark appearance"></button>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>Explore a locus</h1>
+    <p>Enter rsIDs or a GRCh38 region. Each variant is expanded to its LD partners, and every candidate is annotated.</p>
+  </section>
+
+  <form class="searchcard" id="searchForm" autocomplete="off" role="search">
+    <div class="searchrow">
+      <div class="searchbox">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" spellcheck="false" aria-label="Variants or region"
+          placeholder="rs7903146, rs1421085, or chr10:112,990,000-113,000,000">
+        <button class="go" type="submit" id="goBtn" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="examples" id="examples"></div>
+    <div class="controls" id="controls"></div>
+  </form>
+
+  <div id="banners"></div>
+  <div id="results"></div>
+</main>
+
+<footer class="foot">
+  <span>HaploReg v5 · Kellis Lab, MIT · Site by Pranava Kumar</span>
+  <span class="spacer"></span>
+  <a href="https://rest.ensembl.org" target="_blank" rel="noopener">Live data: Ensembl REST</a>
+  <a href="../docs/">Documentation</a>
+</footer>
+
+<div class="drawer-backdrop" id="backdrop" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Variant record"></aside>
+
+<script src="map.js"></script>
+<script src="explore.js"></script>
+</body>
+</html>

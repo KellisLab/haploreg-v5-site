@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HaploReg</title>
+<meta name="description" content="Expand any GWAS variant to its haplotype block and compare every candidate's chromatin state, motif changes, protein binding and trait associations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script src="shared/epigenomes.js"></script>
+<script src="shared/engine.js"></script>
+<script src="shared/glossary.js"></script>
+<script src="assets/ui.js"></script>
+</head>
+<body data-root="">
+<header class="topbar">
+  <a class="wordmark" href="./">HaploReg<sup>v5</sup></a>
+  <nav class="topnav">
+    <a href="explore/">Explore</a>
+    <a href="docs/">Docs</a>
+    <a href="classic/" class="hide-xs">Classic</a>
+  </nav>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="themeBtn" type="button" title="Switch light / dark" aria-label="Switch light or dark appearance"></button>
+</header>
+
+<main class="landing" style="max-width:none;padding:0">
+  <section class="landing-hero">
+    <p class="kicker">v5 · GRCh38 · 1000 Genomes · 127 epigenomes</p>
+    <h1>Find the variant behind the signal.</h1>
+    <p class="lede">A GWAS hit points to a haplotype, not a cause. HaploReg expands each variant to everything in linkage disequilibrium with it, then lines up chromatin state, motif changes, protein binding and trait associations for every candidate.</p>
+
+    <form class="hero-search" action="explore/" method="get" role="search">
+      <div class="searchbox">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input name="query" type="search" spellcheck="false" autocomplete="off" aria-label="Variants or region"
+          placeholder="rs7903146, or chr10:112,990,000-113,000,000" required>
+        <button class="go" type="submit" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+      </div>
+      <div class="examples">
+        <span>Try</span>
+        <a class="chip-btn" href="explore/?query=rs7903146"><b>rs7903146</b> TCF7L2</a>
+        <a class="chip-btn" href="explore/?query=rs1421085"><b>rs1421085</b> FTO</a>
+        <a class="chip-btn" href="explore/?query=rs12740374"><b>rs12740374</b> SORT1</a>
+        <a class="chip-btn" href="explore/?query=rs4988235"><b>rs4988235</b> LCT</a>
+      </div>
+    </form>
+  </section>
+
+  <figure class="art">
+    <canvas data-ld-art role="img" aria-label="A rotating three-dimensional landscape of simulated linkage disequilibrium: haplotype blocks rise as ridges, separated by recombination hotspots."></canvas>
+    <figcaption>Simulated linkage disequilibrium across 120 variants. Each line joins pairs the same distance apart, raised by their r², so haplotype blocks stand as plateaus. Drag to turn.</figcaption>
+  </figure>
+
+  <section class="demo" aria-labelledby="demoTitle">
+    <p class="kicker">Demo · 2 min 17 s</p>
+    <h2 id="demoTitle">One locus, start to finish.</h2>
+    <p class="lede">rs1421085 at FTO in Classic, then the reimagined Explore and Map &amp; reasoning, then its evidence exported into Mantis as a dense map you can measure and follow back. Every shot is the live site or Mantis itself.</p>
+    <video class="demo-video" controls preload="none" playsinline poster="assets/demo/haploreg-mantis-poster.jpg"
+      aria-label="HaploReg and Mantis demo, 2 minutes 17 seconds, with on-screen captions">
+      <source src="assets/demo/haploreg-mantis-demo.mp4" type="video/mp4">
+      <a href="assets/demo/haploreg-mantis-demo.mp4">Download the demo (MP4, 14 MB)</a>
+    </video>
+    <details class="demo-text">
+      <summary>On-screen captions</summary>
+      <ol>
+        <li>A GWAS hit points to a haplotype. Not a cause.</li>
+        <li>94 variants. Which one does the work?</li>
+        <li>HaploReg annotates every variant: enhancers, promoters, motifs, eQTLs, chromatin, GWAS hits, conservation.</li>
+        <li>HaploReg Classic: the table HaploReg v4 users know, rebuilt on GRCh38. Every variant in LD with the query, with r² and D′. Frequencies, regulatory marks, motifs and GWAS hits.</li>
+        <li>Then, reimagined. Explore: start from a variant, a gene or a region. One query expands to the whole haplotype: 94 variants. Evidence chips filter the block in one click.</li>
+        <li>Map &amp; reasoning: each variant is placed by its evidence, not its position. The trace shows its work: 94 variants, 7 regulatory. rs11642015 leads by a narrow 0.01. Evidence, not proof.</li>
+        <li>Export evidence: a row per variant, GWAS hit and enhancer.</li>
+        <li>Into the same Mantis project, as a second map. 1,143 rows: each variant, GWAS hit and enhancer overlap. Embedded, laid out, clustered and named (4 minutes, 48× in the film).</li>
+        <li>One project, two maps of the same locus: the 94 variants, and the 1,143 pieces of evidence behind them.</li>
+        <li>Sem. Ruler measures meaning in the full embedding, not the 2D layout. A BMI hit and a food-liking hit: cos sim 0.73. Two BMI hits, from different variants: cos sim 0.93. Landmarks: one telling point per cluster, chosen by Mantis.</li>
+        <li>Zoom in on rs11642015: its point keeps every HaploReg field. Its haploreg_url links straight back to that variant's record in HaploReg Explore.</li>
+        <li>All in one place. HaploReg × Mantis.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="paths">
+    <a class="path" href="explore/">
+      <h2>Explore <span aria-hidden="true">→</span></h2>
+      <p>LD plots, a chromatin-state heatmap across 127 epigenomes, and a Mantis-style evidence map with a traced reasoning journey for every locus.</p>
+    </a>
+    <a class="path" href="docs/">
+      <h2>Documentation <span aria-hidden="true">→</span></h2>
+      <p>Every column, option and term defined, with reference tables for chromatin states, tissues and populations.</p>
+    </a>
+    <a class="path" href="classic/">
+      <h2>Classic <span aria-hidden="true">→</span></h2>
+      <p>The HaploReg v4 interface on the v5 data layer. The same query form, result tables and text output.</p>
+    </a>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>HaploReg v5 · Kellis Lab, MIT · Site by Pranava Kumar</span>
+  <span class="spacer"></span>
+  <a href="https://rest.ensembl.org" target="_blank" rel="noopener">Live data: Ensembl</a>
+  <a href="https://pubs.broadinstitute.org/mammals/haploreg/haploreg.php" target="_blank" rel="noopener">HaploReg v4.2 ↗</a>
+</footer>
+
+<script src="assets/hero.js"></script>
+</body>
+</html>

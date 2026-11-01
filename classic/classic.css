@@ -1,0 +1,139 @@
+/* HaploReg v5 Classic — reproduces the HaploReg v4 stylesheet (haploreg_v4.css + tabber). */
+
+body {
+  font-family: sans-serif;
+  font-size: 1em;
+  background-color: white;
+  margin: 8px;
+}
+
+h1 { font-size: 2em; margin: 0.67em 0; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 0.85em; font-weight: bold; }
+p { font-size: 0.85em; }
+
+.page {
+  width: 75%;
+  min-width: 1080px;
+  background-color: lightgreen;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.page .logos { font-size: 0.75em; text-align: right; line-height: 1.5; }
+.page .logos a { color: #000; font-weight: bold; text-decoration: none; }
+.page .logos a:hover { text-decoration: underline; }
+
+table.optiontable { font-size: 0.85em; }
+table.optiontable td { padding: 1px 2px; }
+table.optiontable input[type="text"] { width: 18em; }
+table.optiontable select[name="gwas_idx"] { max-width: 100%; }
+
+table.detailtable {
+  border-style: none;
+  border-collapse: collapse;
+  border-color: gray;
+  border-spacing: 0;
+  border-width: 1px;
+}
+table.detailtable td {
+  font-size: 0.75em;
+  border-style: dotted;
+  border-color: gray;
+  border-width: 1px;
+  padding: 3px;
+}
+table.detailtable pre { margin: 0; font-size: 1em; font-weight: normal; }
+
+table.resulttable {
+  width: 95%;
+  border: 2px solid black;
+}
+table.resulttable tr.normal { background-color: white; }
+table.resulttable tr.highlight { background-color: WhiteSmoke; }
+table.resulttable td { font-size: 0.75em; }
+table.resulttable tr.header { background-color: lightyellow; }
+
+.enhancer { background-color: Orange; }
+.promoter { background-color: Red; }
+.dnase { background-color: LightGray; }
+.proteins { background-color: LightGreen; }
+.motifs { background-color: LightPink; }
+.nonsilent { background-color: Violet; }
+.silent { background-color: Thistle; }
+.eqtls { background-color: Yellow; }
+
+/* ---- tabber (example.css, Patrick Fitzgerald, MIT licence) ---- */
+.tabberlive .tabbertabhide { display: none; }
+.tabberlive { margin-top: 1em; }
+
+ul.tabbernav {
+  margin: 0;
+  padding: 3px 0;
+  border-bottom: 1px solid #778;
+  font: bold 12px Verdana, sans-serif;
+}
+ul.tabbernav li { list-style: none; margin: 0; display: inline; }
+ul.tabbernav li a {
+  padding: 3px 0.5em;
+  margin-left: 3px;
+  border: 1px solid #778;
+  border-bottom: none;
+  background: #DDE;
+  text-decoration: none;
+}
+ul.tabbernav li a:link { color: #448; }
+ul.tabbernav li a:visited { color: #667; }
+ul.tabbernav li a:hover { color: #000; background: #AAE; border-color: #227; }
+ul.tabbernav li.tabberactive a { background-color: #fff; border-bottom: 1px solid #fff; }
+ul.tabbernav li.tabberactive a:hover { color: #000; background: white; border-bottom: 1px solid white; }
+
+.tabberlive .tabbertab { padding: 5px; border: 1px solid #aaa; border-top: 0; }
+.tabberlive .tabbertab h2 { display: none; }
+.tabberlive .tabbertab h3 { display: none; }
+
+/* ---- v5 additions, kept in the same plain style ---- */
+.demo-warning {
+  border: 2px solid red;
+  background: #fff4f4;
+  padding: 4px 6px;
+  font-size: 0.85em;
+}
+.source-note { font-size: 0.75em; font-style: italic; }
+.status { font-size: 0.85em; }
+.error { color: red; }
+pre.textoutput { margin: 0; font: 13px monospace; white-space: pre; }
+
+/* help links ("?") next to column headers, options and detail sections */
+a.help {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #448;
+  text-decoration: none;
+  margin-left: 1px;
+}
+a.help:hover { color: #000; text-decoration: underline; }
+td.colhead { white-space: normal; }
+
+/* documentation page */
+body.docpage { max-width: 860px; margin: 8px auto; padding: 0 12px; }
+body.docpage h2 { border-bottom: 1px solid #aaa; padding-bottom: 2px; margin-top: 1.4em; }
+.doc-h3 { font-size: 1em !important; }
+.doc-toc, .doc-list { font-size: 0.85em; }
+.doc-term { margin: 0 0 0.6em 0; padding: 2px 6px; }
+.doc-term p, .doc-term ul, .doc-term li { font-size: 0.85em; }
+.doc-term ul { padding-left: 1.6em; }
+.doc-term ul li { font-size: 1em; }
+.doc-term-name { margin-bottom: 0.2em; }
+.doc-term-body p:first-child { margin-top: 0.2em; }
+.doc-target { background: lightyellow; outline: 1px dotted gray; }
+table.doc-table { border-collapse: collapse; font-size: 0.75em; margin-bottom: 1em; }
+table.doc-table th, table.doc-table td { border: 1px dotted gray; padding: 3px 5px; text-align: left; vertical-align: top; }
+table.doc-columns td { font-size: 0.75em; }
+.state-swatch, .glossary-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #777;
+  vertical-align: middle;
+}

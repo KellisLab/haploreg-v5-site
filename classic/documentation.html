@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HaploReg v5 documentation</title>
+<link rel="stylesheet" type="text/css" href="classic.css">
+<script src="../shared/epigenomes.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/glossary.js"></script>
+</head>
+<body class="docpage">
+<h1>HaploReg v5 documentation</h1>
+<p><a href="index.html">Back to HaploReg v5</a> | <a href="../docs/">Full documentation (redesigned site)</a></p>
+<hr>
+
+<p><b>Contents</b></p>
+<ul id="toc" class="doc-toc"></ul>
+
+<h2 id="overview">Overview</h2>
+<p>HaploReg helps turn a list of disease- or trait-associated variants into mechanistic hypotheses. Because a GWAS signal usually tags a whole haplotype rather than the causal variant itself, HaploReg first expands each query variant to the variants in linkage disequilibrium with it, then annotates every candidate with evidence that it might be functional: chromatin state across reference epigenomes, DNA accessibility, bound proteins, altered regulatory motifs, evolutionary constraint, known trait and expression associations, and its position relative to genes.</p>
+<p>A typical reading of a results table: look for variants that sit in an enhancer or promoter (orange / red cells) in a tissue relevant to the trait, that alter a motif for a factor active in that tissue (pink), and that are bound by proteins (green) or open chromatin (grey). eQTL hits (yellow) suggest which gene is affected.</p>
+
+<h2 id="quickstart">Quick start</h2>
+<ol class="doc-list">
+	<li>On the <b>Build Query</b> tab, enter rsIDs (e.g. <code>rs7903146</code>), or a region such as <code>chr10:112990000-113000000</code>, or upload a text file with one rsID per line, or choose a curated GWAS locus set.</li>
+	<li>On <b>Set Options</b>, pick the LD threshold (r²) and the population used to compute LD, and any display options.</li>
+	<li>Click <b>Submit</b>. Each query SNP gets a table of variants in LD. Query SNPs are shown in red.</li>
+	<li>Hover over a colored cell for the full list behind it. Click a variant to open its detail view in a new window.</li>
+	<li>Choose <b>Text</b> output to get tab-separated values for analysis.</li>
+</ol>
+
+<h2 id="columns">Results table columns</h2>
+<p>Each column links to its full definition below.</p>
+<table class="detailtable doc-columns" id="columnTable"></table>
+
+<div id="glossary"></div>
+
+<h2 id="reference">Reference tables</h2>
+<h3 class="doc-h3" id="ref-states15">ChromHMM core 15-state model</h3>
+<div id="refStates15"></div>
+<h3 class="doc-h3" id="ref-states25">ChromHMM 25-state model (imputed marks)</h3>
+<div id="refStates25"></div>
+<h3 class="doc-h3" id="ref-tissues">Tissue codes</h3>
+<div id="refTissues"></div>
+<h3 class="doc-h3" id="ref-text">Text output columns</h3>
+<div id="refText"></div>
+<h3 class="doc-h3" id="ref-epigenomes">Reference epigenomes (E001–E129)</h3>
+<div id="refEpigenomes"></div>
+
+<h2 id="pipeline">The HaploReg v5 pipeline</h2>
+<p>Version 5 rebuilds the HaploReg database from the 1000 Genomes high-coverage (30×, GRCh38) call set. For each chromosome the pipeline keeps <code>#CHROM</code>, <code>POS</code>, <code>ID</code>, <code>REF</code>, <code>ALT</code> and the per-superpopulation allele frequencies in unrelated samples (<code>AF_*_unrel</code>), assigns rsIDs, annotates every variant with its ChromHMM chromatin state in each reference epigenome, and scans reference and alternate alleles against the motif library with MOODS. Per-chromosome VCFs are bgzipped, tabix-indexed and merged. Chromosome Y has no ChromHMM annotation, so its chromatin-state fields are written as <code>.</code> to keep the header identical across chromosomes.</p>
+<p>The web interfaces read data through a small adapter layer (see <code>README.md</code>), so the pipeline output can replace the interim Ensembl source without changing either interface.</p>
+
+<h2 id="differences">Differences from HaploReg v4</h2>
+<ul class="doc-list">
+	<li>Annotations are computed natively on GRCh38 (v4 annotated on hg19 and displayed hg38 positions).</li>
+	<li>Five superpopulations (AFR, AMR, EAS, EUR, SAS) replace v4's four. v4's ASN contained only East Asian samples and corresponds to EAS; South Asian (SAS) populations are new.</li>
+	<li>The default conservation column is GERP, which the interim live source can supply.</li>
+	<li>A Data source option chooses between live Ensembl data and the offline synthetic demo.</li>
+	<li>Every column and option links to this documentation.</li>
+</ul>
+
+<h2 id="references">References</h2>
+<ol class="doc-list" id="refs"></ol>
+<p>Contact: haploreg@mit.edu</p>
+
+<script>
+(function () {
+	var esc = HR.util.escape;
+	function linkify(html) {
+		return html.replace(/<a data-term="([\w-]+)">/g, '<a href="#$1">');
+	}
+
+	var toc = [['overview', 'Overview'], ['quickstart', 'Quick start'], ['columns', 'Results table columns']]
+		.concat(HR.DOC_CATEGORIES.map(function (c) { return ['cat-' + c.id, c.title]; }))
+		.concat([['reference', 'Reference tables'], ['pipeline', 'The HaploReg v5 pipeline'], ['differences', 'Differences from v4'], ['references', 'References']]);
+	document.getElementById('toc').innerHTML = toc.map(function (t) {
+		return '<li><a href="#' + t[0] + '">' + esc(t[1]) + '</a></li>';
+	}).join('');
+
+	var cols = [
+		['chr, pos (hg38)', '', 'pos'], ['LD (r²)', '', 'r2'], ["LD (D')", '', 'dprime'], ['variant', '', 'query-snp'],
+		['Ref, Alt', '', 'ref-alt'], ['AFR … SAS freq', '', 'af'], ['GERP cons', '', 'gerp'], ['SiPhy cons', '', 'siphy'],
+		['Promoter histone marks', 'promoter', 'promoter-marks'], ['Enhancer histone marks', 'enhancer', 'enhancer-marks'],
+		['DNAse', 'dnase', 'dnase'], ['Proteins bound', 'proteins', 'proteins'], ['Motifs changed', 'motifs', 'motifs-changed'],
+		['NHGRI/EBI GWAS hits', 'eqtls', 'gwas'], ['GRASP QTL hits', 'eqtls', 'grasp'], ['Selected eQTL hits', 'eqtls', 'eqtl'],
+		['GENCODE / RefSeq genes', '', 'gencode'], ['dbSNP func annot', 'nonsilent', 'func']
+	];
+	document.getElementById('columnTable').innerHTML = '<tr><td><b>Column</b></td><td><b>Cell color</b></td><td><b>Meaning</b></td></tr>' +
+		cols.map(function (c) {
+			var g = HR.GLOSSARY_BY_ID[c[2]];
+			return '<tr><td><a href="#' + c[2] + '">' + esc(c[0]) + '</a></td><td' + (c[1] ? ' class="' + c[1] + '"' : '') + '></td><td>' + esc(g.short) + '</td></tr>';
+		}).join('');
+
+	document.getElementById('glossary').innerHTML = HR.DOC_CATEGORIES.map(function (c) {
+		return '<h2 id="cat-' + c.id + '">' + esc(c.title) + '</h2>' + HR.GLOSSARY.filter(function (g) { return g.cat === c.id; }).map(function (g) {
+			return '<div class="doc-term" id="' + g.id + '"><p class="doc-term-name"><b>' + esc(g.term) + '</b></p><div class="doc-term-body">' + linkify(g.body) + '</div></div>';
+		}).join('');
+	}).join('');
+
+	var ref = HR.renderDocReference();
+	document.getElementById('refStates15').innerHTML = ref.states15;
+	document.getElementById('refStates25').innerHTML = ref.states25;
+	document.getElementById('refTissues').innerHTML = ref.tissues;
+	document.getElementById('refText').innerHTML = ref.textColumns;
+	document.getElementById('refEpigenomes').innerHTML = ref.epigenomes;
+	document.getElementById('refs').innerHTML = HR.DOC_REFERENCES.map(function (r) { return '<li>' + r + '</li>'; }).join('');
+
+	// Content is generated after load, so jump to the requested anchor now that it exists.
+	function jump() {
+		document.querySelectorAll('.doc-target').forEach(function (e) { e.classList.remove('doc-target'); });
+		var el = location.hash && document.getElementById(location.hash.slice(1));
+		if (el) { el.scrollIntoView(); el.classList.add('doc-target'); }
+	}
+	jump();
+	window.addEventListener('hashchange', jump);
+	var loaded = Date.now();
+	window.addEventListener('resize', function () { if (location.hash && Date.now() - loaded < 4000) jump(); });
+})();
+</script>
+</body>
+</html>

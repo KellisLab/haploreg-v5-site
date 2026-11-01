@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HaploReg v5</title>
+<link rel="stylesheet" type="text/css" href="classic.css">
+<script src="../shared/epigenomes.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/glossary.js"></script>
+<script src="../shared/source-ensembl.js"></script>
+<script src="../shared/source-demo.js"></script>
+</head>
+<body>
+<div class="page">
+	<table width="100%"><tr>
+		<td align="left" valign="middle"><h1>HaploReg v5</h1></td>
+		<td align="right" class="logos">
+			<a href="https://compbio.mit.edu" target="_blank">MIT Computational Biology</a><br>
+			<a href="https://www.broadinstitute.org" target="_blank">Broad Institute</a>
+		</td>
+	</tr></table>
+
+	<p>HaploReg is a tool for exploring annotations of the noncoding genome at variants on haplotype blocks, such as candidate regulatory SNPs at disease-associated loci. Version 5 rebuilds the annotation pipeline on the 1000 Genomes high-coverage call set (GRCh38), with linked SNPs and small indels shown alongside ChromHMM chromatin states across reference epigenomes, regulatory motif alterations scanned with MOODS, sequence constraint, GWAS associations and eQTLs. HaploReg is designed for researchers developing mechanistic hypotheses of the impact of non-coding variants on clinical phenotypes and normal variation.</p>
+
+	<p><b>Update 2026.10.28: Version 5.0 (Classic)</b> keeps the familiar v4 interface on top of the new v5 data layer. Positions are reported in hg38 and allele frequencies for all five 1000 Genomes superpopulations (AFR, AMR, EAS, EUR, SAS). Until the v5 pipeline backend is online, the default data source is the live Ensembl REST API; an offline demo source with synthetic chromatin annotations is available under Set Options.</p>
+
+	<p><b>Update 2026.10.28:</b> Try the redesigned interface, <a href="../explore/">HaploReg Explore</a>. Older versions available: <a href="https://pubs.broadinstitute.org/mammals/haploreg/haploreg.php">v4.2</a>.</p>
+
+	<form id="hrform" action="index.html" method="get">
+	<div class="tabberlive">
+		<ul class="tabbernav">
+			<li class="tabberactive"><a href="javascript:void(null);" title="Build Query" data-tab="0">Build Query</a></li>
+			<li><a href="javascript:void(null);" title="Set Options" data-tab="1">Set Options</a></li>
+			<li><a href="javascript:void(null);" title="Documentation" data-tab="2">Documentation</a></li>
+		</ul>
+
+		<div class="tabbertab">
+			<h2>Build Query</h2>
+			<p>Use one of the three methods below to enter a set of variants. If an r² threshold is specified (see the Set Options tab), results for each variant will be shown in a separate table along with other variants in LD. If r² is set to NA, only queried variants will be shown, together in one table.</p>
+			<table class="optiontable">
+			<tr>
+				<td align="right">Query (comma-delimited list of rsIDs OR a single region as chrN:start-end):</td>
+				<td><input type="text" name="query" value=""></td>
+			</tr>
+			<tr>
+				<td align="right">or, upload a text file (one refSNP ID per line):</td>
+				<td><input type="file" name="upload_file" accept=".txt,.tsv,.csv,text/plain"></td>
+			</tr>
+			<tr>
+				<td align="right">or, select a GWAS:</td>
+				<td><select name="gwas_idx"><option value=""></option></select></td>
+			</tr>
+			</table>
+		</div>
+
+		<div class="tabbertab tabbertabhide">
+			<h2>Set Options</h2>
+			<table class="optiontable">
+			<tr>
+				<td align="right">LD threshold, r² (select NA to only show query variants):</td>
+				<td><select name="ldThresh"></select></td>
+			</tr>
+			<tr>
+				<td align="right"><span id="ldPanelLabel">1000G</span> population for LD calculation:</td>
+				<td id="ldPopCell"></td>
+			</tr>
+			<tr>
+				<td align="right">Source for epigenomes:</td>
+				<td><select name="epi"></select></td>
+			</tr>
+			<tr>
+				<td align="right">Mammalian conservation algorithm:</td>
+				<td><input type="radio" name="cons" value="gerp"> GERP<input type="radio" name="cons" value="siphy"> SiPhy-omega<input type="radio" name="cons" value="both"> both</td>
+			</tr>
+			<tr>
+				<td align="right">Show position relative to:</td>
+				<td><input type="radio" name="genetypes" value="gencode"> GENCODE genes<input type="radio" name="genetypes" value="refseq"> RefSeq genes<input type="radio" name="genetypes" value="both"> both</td>
+			</tr>
+			<tr>
+				<td align="right">Condense lists in table longer than:</td>
+				<td><select name="trunc"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="1000">never condense</option></select></td>
+			</tr>
+			<tr>
+				<td align="right">Condense indel oligos longer than:</td>
+				<td><select name="oligo"><option value="1">1</option><option value="6">6</option><option value="1000">never condense</option></select></td>
+			</tr>
+			<tr>
+				<td align="right">Output mode:</td>
+				<td><input type="radio" name="output" value="html"> HTML<input type="radio" name="output" value="text"> Text</td>
+			</tr>
+			<tr>
+				<td align="right">Data source:</td>
+				<td><select name="source"></select></td>
+			</tr>
+			</table>
+		</div>
+
+		<div class="tabbertab tabbertabhide">
+			<h2>Documentation</h2>
+			<p>For definitions of every column, option and term, data sources, the chromatin-state color key and usage examples, see the <a href="documentation.html" class="docpopup">full documentation</a> (opens in a pop-up window). Throughout the interface, click a <a href="documentation.html#rsid" class="help docpopup">?</a> to jump straight to the definition of the item next to it.</p>
+			<p>Enter one or more rsIDs (for example <a href="index.html?query=rs7903146">rs7903146</a>), a region such as <a href="index.html?query=chr10:112990000-113000000&amp;ldThresh=NA">chr10:112990000-113000000</a>, upload a file of rsIDs, or choose a curated GWAS locus set. Each query variant is expanded to all variants in linkage disequilibrium above the chosen r² threshold in the selected superpopulation, and every variant is annotated. Click a variant to open its detail view.</p>
+			<p><b>Columns.</b> Promoter and enhancer histone marks summarize the epigenomes in which the variant falls in a promoter- or enhancer-associated chromatin state (or histone peak, depending on the epigenome source); hover over a cell to list the epigenomes. Lists longer than the condense setting are replaced by counts of distinct tissues. Motifs changed lists position weight matrices whose match score changes between the reference and alternate allele.</p>
+			<p><b>Data sources.</b> <i>Live — Ensembl REST</i> returns real hg38 positions, 1000 Genomes Phase 3 frequencies and LD, NHGRI-EBI GWAS hits, VEP consequences and GERP scores, and Ensembl Regulatory Build overlaps; per-epigenome chromatin states and eQTLs require the v5 pipeline backend. <i>Demo</i> works offline with synthetic annotations for interface development only.</p>
+			<p>The HaploReg database and web interface were originally produced by Luke Ward in the <a href="http://compbio.mit.edu">Kellis Lab at MIT</a>. To cite HaploReg, please refer to the publication in Nucleic Acids Research: <a href="https://pubmed.ncbi.nlm.nih.gov/22064851/">HaploReg: a resource for exploring chromatin states, conservation, and regulatory motif alterations within sets of genetically linked variants</a> (PMID:22064851).</p>
+			<p>The HaploReg v5 web interfaces, this Classic view included, were built by Pranava Kumar.</p>
+			<p>Contact: haploreg@mit.edu</p>
+		</div>
+	</div>
+	<input type="submit" name="submit" value="Submit">
+	</form>
+	<p></p>
+</div>
+<div id="results"></div>
+<script src="classic.js"></script>
+</body>
+</html>

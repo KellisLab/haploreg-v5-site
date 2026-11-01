@@ -1,0 +1,6 @@
+.vercel
+.env*
+.claude
+film/
+*.log
+node_modules/

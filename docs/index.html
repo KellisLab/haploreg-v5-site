@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation · HaploReg</title>
+<meta name="description" content="Definitions for every column, option and term in HaploReg, with reference tables for chromatin states, tissues and populations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<script src="../shared/epigenomes.js"></script>
+<script src="../shared/engine.js"></script>
+<script src="../shared/glossary.js"></script>
+<script src="../assets/ui.js"></script>
+</head>
+<body class="docs-page" data-root="../">
+<header class="topbar">
+  <a class="wordmark" href="../">HaploReg<sup>v5</sup></a>
+  <nav class="topnav">
+    <a href="../explore/">Explore</a>
+    <a href="./" class="active">Docs</a>
+    <a href="../classic/index.html" class="hide-xs">Classic</a>
+  </nav>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="themeBtn" type="button" title="Switch light / dark" aria-label="Switch light or dark appearance"></button>
+</header>
+
+<div class="docs">
+  <nav aria-label="Documentation">
+    <input type="search" id="filter" placeholder="Search terms…" aria-label="Search the glossary">
+    <ul id="toc"></ul>
+  </nav>
+
+  <article>
+    <h1>Documentation</h1>
+    <p class="lede">What every column, option and annotation means, where the data comes from, and how to read a result. Each <button type="button" class="info" data-term="r2" aria-label="Example info icon">i</button> in the app opens a short definition that links here.</p>
+
+    <section id="overview" data-static>
+      <h2>How to read a HaploReg result</h2>
+      <p>A GWAS hit rarely points at the causal variant itself. It points at a <b>haplotype block</b>: a set of variants that are inherited together, any one of which could be responsible. HaploReg expands each query variant to its <b>LD partners</b>, then lines up the evidence that each candidate is functional.</p>
+      <ol>
+        <li><b>Start with the LD plot.</b> Every point is a variant; height and darkness show its r² with the query (the ringed point). Variants near the top are statistically hard to tell apart from the lead SNP.</li>
+        <li><b>Look for regulatory context in a relevant tissue.</b> Promoter and enhancer chips (red and amber dots) list the tissues where the variant sits in active chromatin. The <i>Chromatin states</i> tab shows all 127 epigenomes at once; a run of yellow enhancer states in, say, pancreatic islets is a strong hint for a diabetes locus.</li>
+        <li><b>Check mechanism.</b> A motif change (pink dot) for a factor expressed in that tissue, a bound protein (green) or open chromatin (grey) makes a regulatory effect plausible.</li>
+        <li><b>Find the target gene.</b> eQTLs link the variant to a gene's expression. The nearest gene is only a first guess.</li>
+        <li><b>Sort by Evidence</b> to rank candidates by how many independent lines of evidence they have, then open a variant for full detail.</li>
+      </ol>
+    </section>
+
+    <section id="quickstart" data-static>
+      <h2>Quick start</h2>
+      <p><b>Search</b> with one or more rsIDs (<code>rs7903146, rs1421085</code>), a region (<code>chr10:112,990,000-113,000,000</code>), an uploaded text file with one rsID per line, or a curated trait set. Set the <b>LD r²</b> threshold and <b>population</b>; changing them re-runs the query. Display options (epigenome model, conservation, gene annotation) update the table instantly.</p>
+      <p>Use the filter chips to keep only variants with a given kind of evidence, click column headers to sort, and click any row, plot point or heatmap row to open the variant's record. <b>Export TSV</b> downloads the full annotation table; <b>Copy link</b> shares the exact query and settings.</p>
+      <p>Prefer the original look? <a href="../classic/index.html">HaploReg Classic</a> uses the same data and settings with the v4 interface.</p>
+    </section>
+
+    <section id="columns" data-static>
+      <h2>Column guide</h2>
+      <div class="col-guide" id="colGuide"></div>
+    </section>
+
+    <div id="glossary"></div>
+
+    <section id="reference" data-static>
+      <h2>Reference tables</h2>
+      <h3 id="ref-states15">ChromHMM core 15-state model</h3>
+      <div id="refStates15"></div>
+      <h3 id="ref-states25">ChromHMM 25-state model (12 imputed marks)</h3>
+      <div id="refStates25"></div>
+      <h3 id="ref-tissues">Tissue codes</h3>
+      <div id="refTissues"></div>
+      <h3 id="ref-groups">Epigenome groups</h3>
+      <div id="refGroups"></div>
+      <h3 id="ref-text">Text / TSV export columns</h3>
+      <div id="refText"></div>
+      <details class="doc-details"><summary>All 127 reference epigenomes</summary><div id="refEpigenomes"></div></details>
+    </section>
+
+    <section id="pipeline" data-static>
+      <h2>The HaploReg v5 pipeline</h2>
+      <p>Version 5 rebuilds the database from the 1000 Genomes high-coverage call set (30×, GRCh38). For each chromosome the pipeline keeps <code>#CHROM</code>, <code>POS</code>, <code>ID</code>, <code>REF</code>, <code>ALT</code> and the per-superpopulation allele frequencies in unrelated samples (<code>AF_*_unrel</code>), assigns rsIDs, annotates every variant with its ChromHMM state in each reference epigenome, and scans the reference and alternate alleles against the motif library with MOODS. Per-chromosome VCFs are bgzipped, tabix-indexed and merged; chromosome Y, which has no ChromHMM annotation, carries the same headers with <code>.</code> values.</p>
+      <p>Both interfaces read data through one adapter layer, so the pipeline output will replace the interim live source without changes to either UI. See <code>README.md</code> for the variant record format.</p>
+    </section>
+
+    <section id="differences" data-static>
+      <h2>What changed from v4</h2>
+      <ul>
+        <li>Annotations computed natively on GRCh38, matching the high-coverage call set (v4 annotated on hg19 and displayed hg38 positions).</li>
+        <li>Five superpopulations (AFR, AMR, EAS, EUR, SAS). v4's single Asian group (ASN) held only East Asian samples and corresponds to EAS; South Asian (SAS) populations are new.</li>
+        <li>Live data from Ensembl while the v5 backend is built, plus an offline demo mode.</li>
+        <li>A redesigned interface adds the LD plot, a chromatin-state heatmap, evidence filters and ranking, a record view for each variant, dark mode and this glossary. The v4 interface remains as Classic.</li>
+      </ul>
+    </section>
+
+    <section id="references" data-static>
+      <h2>References</h2>
+      <ol id="refs"></ol>
+      <p>Contact: haploreg@mit.edu</p>
+    </section>
+  </article>
+</div>
+
+<footer class="foot">
+  <span>HaploReg v5 · Kellis Lab, MIT · Site by Pranava Kumar</span>
+  <span class="spacer"></span>
+  <a href="https://rest.ensembl.org" target="_blank" rel="noopener">Live data: Ensembl REST</a>
+  <a href="../explore/">Explore</a>
+</footer>
+
+<script>
+(function () {
+  var esc = HR.util.escape;
+
+  function linkify(html) { return html.replace(/<a data-term="([\w-]+)">/g, '<a href="#$1">'); }
+
+  document.getElementById('glossary').innerHTML = HR.DOC_CATEGORIES.map(function (c) {
+    return '<section id="cat-' + c.id + '" data-cat="' + c.id + '"><h2>' + esc(c.title) + '</h2>' +
+      HR.GLOSSARY.filter(function (g) { return g.cat === c.id; }).map(function (g) {
+        return '<div class="term-card" id="' + g.id + '" data-text="' + esc((g.term + ' ' + g.short + ' ' + g.body.replace(/<[^>]+>/g, ' ')).toLowerCase()) + '">' +
+          '<h3>' + esc(g.term) + '</h3><p class="short">' + esc(g.short) + '</p><div class="body">' + linkify(g.body) + '</div></div>';
+      }).join('') + '</section>';
+  }).join('');
+
+  var guide = [['Variant', 'query-snp'], ['Position', 'pos'], ['r²', 'r2'], ['D′', 'dprime'], ['Ref › Alt', 'ref-alt'], ['Alt freq', 'af'],
+    ['Promoter', 'promoter-marks'], ['Enhancer', 'enhancer-marks'], ['DNase', 'dnase'], ['Proteins', 'proteins'], ['Motifs', 'motifs-changed'],
+    ['GWAS', 'gwas'], ['eQTL', 'eqtl'], ['Conservation', 'gerp'], ['Gene', 'gencode'], ['Consequence', 'func']];
+  document.getElementById('colGuide').innerHTML = guide.map(function (c) {
+    return '<a href="#' + c[1] + '"><b>' + esc(c[0]) + '</b><span>' + esc(HR.GLOSSARY_BY_ID[c[1]].short) + '</span></a>';
+  }).join('') + '<a href="#data-source"><b>Evidence</b><span>Count of independent evidence types (promoter, enhancer, DNase, protein, motif, GWAS, eQTL, conservation) used to rank candidates.</span></a>';
+
+  var ref = HR.renderDocReference();
+  document.getElementById('refStates15').innerHTML = ref.states15;
+  document.getElementById('refStates25').innerHTML = ref.states25;
+  document.getElementById('refTissues').innerHTML = ref.tissues;
+  document.getElementById('refText').innerHTML = ref.textColumns;
+  document.getElementById('refEpigenomes').innerHTML = ref.epigenomes;
+  var groups = {};
+  HR.EPIGENOMES.forEach(function (e) { groups[e.group] = (groups[e.group] || 0) + 1; });
+  document.getElementById('refGroups').innerHTML = '<table class="doc-table"><tr><th></th><th>Group</th><th>Epigenomes</th></tr>' + Object.keys(groups).map(function (g) {
+    return '<tr><td><span class="state-swatch" style="background:' + HR.GROUP_COLORS[g] + '"></span></td><td>' + esc(g) + '</td><td>' + groups[g] + '</td></tr>';
+  }).join('') + '</table>';
+  document.getElementById('refs').innerHTML = HR.DOC_REFERENCES.map(function (r) { return '<li>' + r + '</li>'; }).join('');
+
+  var toc = document.getElementById('toc');
+  function buildToc(q) {
+    var items = [['overview', 'How to read a result'], ['quickstart', 'Quick start'], ['columns', 'Column guide']];
+    var html = q ? '' : items.map(function (i) { return '<li class="cat"><a href="#' + i[0] + '">' + esc(i[1]) + '</a></li>'; }).join('');
+    HR.DOC_CATEGORIES.forEach(function (c) {
+      var terms = HR.GLOSSARY.filter(function (g) { return g.cat === c.id && (!q || document.getElementById(g.id).getAttribute('data-text').indexOf(q) >= 0); });
+      if (!terms.length) return;
+      html += '<li class="cat"><a href="#cat-' + c.id + '">' + esc(c.title) + '</a></li>' +
+        terms.map(function (g) { return '<li class="term"><a href="#' + g.id + '">' + esc(g.term) + '</a></li>'; }).join('');
+    });
+    if (!q) html += [['reference', 'Reference tables'], ['pipeline', 'The v5 pipeline'], ['differences', 'What changed from v4'], ['references', 'References']]
+      .map(function (i) { return '<li class="cat"><a href="#' + i[0] + '">' + esc(i[1]) + '</a></li>'; }).join('');
+    toc.innerHTML = html || '<li class="muted" style="padding:4px 10px">No matching terms.</li>';
+  }
+  buildToc('');
+
+  document.getElementById('filter').addEventListener('input', function (e) {
+    var q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.term-card').forEach(function (c) { c.hidden = q && c.getAttribute('data-text').indexOf(q) < 0; });
+    document.querySelectorAll('#glossary section').forEach(function (s) { s.hidden = !s.querySelector('.term-card:not([hidden])'); });
+    document.querySelectorAll('[data-static]').forEach(function (s) { s.hidden = !!q; });
+    buildToc(q);
+  });
+
+  function highlight() {
+    document.querySelectorAll('.term-card.target').forEach(function (c) { c.classList.remove('target'); });
+    var el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!el) return;
+    if (el.classList.contains('term-card')) el.classList.add('target');
+    el.scrollIntoView({ block: 'start' });
+  }
+  window.addEventListener('hashchange', highlight);
+  highlight();
+  // Web fonts change line heights; land on the anchor again once they are in.
+  if (document.fonts && location.hash) document.fonts.ready.then(highlight);
+  var loaded = Date.now();
+  window.addEventListener('resize', function () { if (location.hash && Date.now() - loaded < 4000) highlight(); });
+})();
+</script>
+</body>
+</html>
